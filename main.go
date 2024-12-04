@@ -39,7 +39,6 @@ func generateSessionID() string {
 }
 
 func generateDalleImage(prompt string) (string, error) {
-	apiKey := "sk-proj-TVIXeqyCDh77-FJ-4AirCjIL3fF2Zu6IGJ4beYHbX5D8Gzqj7Wu0BgCsmNixlf9H3EhMbO_6-CT3BlbkFJmFke2x3om--ASwLAqRxIQcjVw5rsSwSKHitDZlZjUGR76Zx7_ytBDQ1xzF3kFhl1r24jOA4Tk" // Replace with your actual OpenAI API key
 	if apiKey == "" {
 		return "", fmt.Errorf("missing API key")
 	}
