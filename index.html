@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <style>
+        body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Arial', sans-serif;
+        color: #fff;
+        overflow-y: auto; /* Permet le défilement vertical */
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100vh;
+    }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .introduction {
+            max-width: 1200px;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(2px);
+            border-radius: 10px;
+            margin-top: 220px;
+            color: #fff;
+            font-size: 1rem;
+            line-height: 1.6;
+            z-index: 10;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        input::placeholder {
+            color: #d9d9d9;
+        }
+        button {
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+        }
+        #loading {
+            display: none;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: #00f2fe;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        .image-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .image-container img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .button-secondary {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #4b6cb7;
+            background: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .button-secondary:hover {
+            background: #f1f1f1;
+        }
+        .logo {
+            position: absolute;
+            top: -60px;
+            left: 20px;
+            width: 300px;
+        }
+        .top-right-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            padding-top: 20px;
+            padding-right: 20px;
+        }
+        .button-link {
+            text-decoration: none;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .button-link.github {
+            background: linear-gradient(to right, #dfdada, #1f1e1e);
+        }
+        .button-link.twitter {
+            background: linear-gradient(to right, #dfdada, #1f1e1e);
+        }
+        .button-link img {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .button-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <img src="/static/logo.png" alt="Logo" class="logo">
+    <div class="top-right-buttons">
+        <a href="https://x.com/VisionXPowerAi" target="_blank" class="button-link twitter">
+            <img src="/static/x-logo.png" alt="X" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 8px;">
+            /VisionXPowerAi
+        </a>
+        <a href="https://github.com/VISIONX-POWERING-AI/VISIONX" target="_blank" class="button-link github">
+            <img src="/static/png.png" alt="GitHub" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 8px;">
+            /VISIONX-POWERING-AI
+        </a>
+    </div>
+    
+    <video autoplay muted loop playsinline>
+        <source src="/static/12637575_1920_1080_30fps.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="introduction">
+        <strong style="font-size: 1.2em;">VISIONX</strong> is a latent text-to-image diffusion model. Thanks to a generous compute donation from Stability AI and support from LAION, we were able to train a Latent Diffusion Model on 512x512 images from a subset of the LAION-5B database. Similar to Google's Imagen, this model uses a frozen CLIP ViT-L/14 text encoder to condition the model on text prompts. With its 860M UNet and 123M text encoder, the model is relatively lightweight and runs on a GPU with at least 10GB VRAM. See this section below and the model card.
+    </div>
+    <div class="container">
+        <h1>Generate AI Images</h1>
+        <form id="imageForm">
+            <input type="text" name="prompt" id="prompt" placeholder="Enter your creative prompt..." required>
+            <button type="submit">Generate</button>
+        </form>
+        <div id="loading">Generating your image...</div>
+        <div class="image-container" id="imageContainer">
+            <img id="generatedImage" src="" alt="Generated AI Image">
+            <a href="/" class="button-secondary">Generate Another</a>
+        </div>
+    </div>
+    <div class="footer">
+        © Copyright 2022 VisionX
+    </div>
+    <script>
+        document.getElementById('imageForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+
+            // Show loading indicator
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            // Hide the image container
+            const imageContainer = document.getElementById('imageContainer');
+            imageContainer.style.display = 'none';
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ prompt })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const imagePath = data.imagePath;
+
+                    // Display the generated image
+                    const generatedImage = document.getElementById('generatedImage');
+                    generatedImage.src = imagePath;
+                    imageContainer.style.display = 'block';
+                } else {
+                    alert('Failed to generate image. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error generating image:', error);
+                alert('An unexpected error occurred.');
+            } finally {
+                // Hide the loading indicator
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
