@@ -39,9 +39,6 @@ func generateSessionID() string {
 }
 
 func generateDalleImage(prompt string) (string, error) {
-	if apiKey == "" {
-		return "", fmt.Errorf("missing API key")
-	}
 
 	requestBody := OpenAIRequest{
 		Model:         "dall-e-2",
